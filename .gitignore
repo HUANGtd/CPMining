@@ -2,13 +2,9 @@
 *.o
 *.a
 *.so
-*.iml
 
 # Folders
-bin
-data
-lib
-out
+/data
 
 # files
 .DS_Store
