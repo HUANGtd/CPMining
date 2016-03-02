@@ -4,7 +4,9 @@
 *.so
 
 # Folders
-/data
+data/
+bin/
+out/
 
 # files
 .DS_Store
