@@ -175,7 +175,7 @@ public class CatePackaging {
 	public void Packaging(double ratio) {
 		this.mapItem2key = new HashMap<String, String>();
 		this.mapName2Cateset = getInitialCatesetmap(this.mapItem2key);
-//		System.out.println(this.mapName2Cateset.size() + " "+ ratio);
+
 		for(int i = 1; i < this.intMaxLength; i++) {
 			for(CItemSet cset : this.arrD) {
 				ArrayList<CItem> arrCItem = cset.getSortedSet();
@@ -195,14 +195,6 @@ public class CatePackaging {
 						this.mapName2Cateset.get(key).mergeCateSet(this.mapName2Cateset.get(citem));
 						this.mapName2Cateset.remove(citem);
 					}
-//					if(isTogether(citem, citem_pre, ratio)) {
-//						String key = this.mapItem2key.get(citem_pre);
-//						for(String s : this.mapName2Cateset.get(citem).getCateSet()) {
-//							this.mapItem2key.put(s, key);
-//						}
-//						this.mapName2Cateset.get(key).mergeCateSet(this.mapName2Cateset.get(citem));
-//						this.mapName2Cateset.remove(citem);
-//					}
 				}
 			}
 		}

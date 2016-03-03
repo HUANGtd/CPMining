@@ -1,17 +1,13 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import basic.CItem;
-import basic.CItemSSet;
-import basic.CItemSet;
-import basic.CateSet;
+import basic.*;
 import preprocess.CatePackaging;
 import preprocess.ItemSet;
 import preprocess.PreProcess;
 import mining.*;
 import dataanalysis.DataAnalysis;
 import io.DataInput;
-import io.DataOutput;
 
 public class CPMining {
 
@@ -24,9 +20,9 @@ public class CPMining {
 		HashMap<String, String> nameMap = preProcess();
 
 		/******************* minging **************/ 
-		CAMining(nameMap);
-	} 
-	
+        CAMining(nameMap);
+	}
+
 	// clinial activity mining 
 	public static void CAMining(HashMap<String, String> nameMap) {
 		DataInput din = new DataInput(nameMap);
@@ -39,14 +35,14 @@ public class CPMining {
 		
 		/******************* reduction[by patient] **************/
 		HashMap<String, CItemSSet> mapSSet = din.DataInputByPatient("data/patientData.txt");
-		
-		/** reduce on whole **/
-		 dr.removingItemsRepeatDailyOnWhole(0.5, 0.05);
-		 din.removeItemsOnWhole(dr.getItemToRemoveOnWhole());
+
+        /** reduce on whole **/
+        dr.removingItemsRepeatDailyOnWhole(0.5, 0.05);
+        din.removeItemsOnWhole(dr.getItemToRemoveOnWhole());
 		 
-		 dr.getImportantItems(20, 0.98);
-		 din.markImportantItem(dr.getImportantItem());
-		 din.MapSSet2csv("data/patient_packaged_removed.csv");
+        dr.getImportantItems(20, 0.98);
+        din.markImportantItem(dr.getImportantItem());
+        din.MapSSet2csv("data/patient_packaged_removed.csv");
 		
 		/** reduce by patient **/
 //		dr.removingItemsRepeatDailyByPatient(0.8);
@@ -74,8 +70,8 @@ public class CPMining {
 		double ratio = 0.04;
 		HashMap<String, CItemSSet> mapSSet_cate = din.DataInputByCategory("data/patientData.txt");
 		DataAnalysis da = new DataAnalysis(din);
-		CItemSSet sset = mapSSet_cate.get("���鲡���");
-		ArrayList<String> itemList = da.getNoneRepeatItemListMap(mapSSet_cate).get("���鲡���");
+		CItemSSet sset = mapSSet_cate.get("检验病理费");
+		ArrayList<String> itemList = da.getNoneRepeatItemListMap(mapSSet_cate).get("检验病理费");
 		sset.SortSSet();
 		CAPackaging cap = new CAPackaging(sset.getSSet(), ratio);
 		cap.Apriori(itemList);
@@ -96,10 +92,10 @@ public class CPMining {
 		ArrayList<String> itemList = dr.getNoneRepeatItemList();
 		PreProcess pp = new PreProcess(itemList);
 		pp.genSetMap();
-//		pp.ouputSetList("data/preprocess/item_replace.txt");
+//		pp.outputSetList("data/preprocess/item_replace.txt");
 		nameMap = pp.getNameMap();
 		
-		// set PackSet
+		// set basic.PackSet
 		HashMap<String, ItemSet> setList = pp.getSetList();
 		for(String key : setList.keySet()) {
 			if(setList.get(key).getPack().size() != 0) {
@@ -140,7 +136,7 @@ public class CPMining {
 			}
 			mapAllItem2package.putAll(cpMap);
 			
-			// set PackSSet
+			// set basic.PackSSet
 			HashMap<String, CateSet> mapCateSet = cp.getName2Cateset();
 			for(String ky : mapCateSet.keySet()) {
 				PackSSet pss = new PackSSet(ky, key);
@@ -184,7 +180,7 @@ public class CPMining {
 			nameMap.put(key, newKey2);
 		}
 		
-		// set PackSSSet
+		// set basic.PackSSSet
 		HashMap<String, CateSet> mapCateSet_pack = cp_pack.getName2Cateset();
 		for(String key : mapCateSet_pack.keySet()) {
 			PackSSSet psss = new PackSSSet(key);
