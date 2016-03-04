@@ -67,6 +67,7 @@ public class DataReduction {
 			}
 			this.itemToRemoveEachPatinet.put(key, itemToRemove);
 		}
+
 		// output
 		DataOutput dout = new DataOutput(this.mapSSetByPatient);
 		dout.outputReducedSSetMapByPatient("data/mining/patient_daily_reduced_bypatient.txt", this.itemToRemoveEachPatinet);
@@ -103,7 +104,7 @@ public class DataReduction {
 	}
 	
 	// mark important item that appears in every patient
-	public void getImportantItems(int top, double sup) {
+	public void markImportantItems(int top, double sup) {
 		HashMap<String, Integer> itemPatientCoverage = new HashMap<String, Integer>();
 		HashMap<String, Double> itemPatientCoverageRatio = new HashMap<String, Double>();
 		this.importantItem = new ArrayList<String>();
@@ -157,7 +158,7 @@ public class DataReduction {
 		}
 		for(int i = 0; i < top; i++) {
 			topImportantItem.add(importance.get(i).getKey());
-			System.out.println(importance.get(i).getKey() + " " + importance.get(i).getValue());
+			System.out.println("#" +  (i+1) + ": " + importance.get(i).getKey() + " " + importance.get(i).getValue());
 		}
 		
 		this.importantItem = topImportantItem;
