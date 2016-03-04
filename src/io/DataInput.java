@@ -24,7 +24,82 @@ public class DataInput {
 	public DataInput(HashMap<String, String> nameMap) {
 		this.nameMap = nameMap;
 	}
-	
+
+	// map[catename, list[list[item],...]]
+	public HashMap<String, CItemSSet> DataInputByCategoryDaily(String fileName) {
+		this.mapSSet = new HashMap<String, CItemSSet>();
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		try {
+			InputStreamReader read = new InputStreamReader(new FileInputStream(file), "UTF-8");
+			reader = new BufferedReader(read);
+			int cateCount = 0;
+			String line = null;
+			String cate = null;
+			String date = null;
+			CItemSet set = null;
+			HashMap<String, CItemSet> dailyCItemSset = null;
+			while((line = reader.readLine()) != null) {
+				String a[] = line.split(" ");
+				CItem newItem = null;
+				if(this.nameMap == null) {
+					newItem = new CItem(a[1], a[0], a[2], a[3]);
+				} else {
+					newItem = new CItem(this.nameMap.get(a[1]), a[0], a[2], a[3], a[1]);
+				}
+
+				if(cate == null || date == null || !date.equals(a[3])) {
+					if(dailyCItemSset != null) {
+						for(String key : dailyCItemSset.keySet()) {
+							if(!mapSSet.containsKey(key)) {
+								cateCount++;
+								CItemSSet newSSet = new CItemSSet(key, cateCount);
+								mapSSet.put(key, newSSet);
+							}
+							mapSSet.get(key).addSet(dailyCItemSset.get(key));
+						}
+					}
+
+					dailyCItemSset = new HashMap<String, CItemSet>();
+					cate = a[2];
+					date = a[3];
+					if(!dailyCItemSset.containsKey(cate)) {
+						CItemSet newDailySSet = new CItemSet(cate);
+						dailyCItemSset.put(cate, newDailySSet);
+					}
+					dailyCItemSset.get(cate).addItem(newItem);
+				} else {
+					if(!dailyCItemSset.containsKey(cate)) {
+						CItemSet newDailySSet = new CItemSet(cate);
+						dailyCItemSset.put(cate, newDailySSet);
+					}
+					dailyCItemSset.get(cate).addItem(newItem);
+				}
+			}
+			if(dailyCItemSset != null) {
+				for(String key : dailyCItemSset.keySet()) {
+					if(!mapSSet.containsKey(key)) {
+						cateCount++;
+						CItemSSet newSSet = new CItemSSet(key, cateCount);
+						mapSSet.put(key, newSSet);
+					}
+					mapSSet.get(key).addSet(dailyCItemSset.get(key));
+				}
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+		return this.mapSSet;
+	}
+
 	// map[catename, list[list[item],...]]
 	public HashMap<String, CItemSSet> DataInputByCategory(String fileName) {
 		this.mapSSet = new HashMap<String, CItemSSet>();
@@ -63,6 +138,9 @@ public class DataInput {
             		set.addItem(newItem);
             	}
             }
+			if(set != null) {
+				mapSSet.get(cate).addSet(set);
+			}
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -116,6 +194,9 @@ public class DataInput {
             		set.addItem(newItem);
             	}
             }
+			if(set != null) {
+				mapSSet.get(patient).addSet(set);
+			}
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();

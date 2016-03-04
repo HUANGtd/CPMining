@@ -40,7 +40,7 @@ public class CPMining {
         dr.removingItemsRepeatDailyOnWhole(0.5, 0.05);
         din.removeItemsOnWhole(dr.getItemToRemoveOnWhole());
 		 
-        dr.getImportantItems(20, 0.98);
+        dr.markImportantItems(20, 0.98);
         din.markImportantItem(dr.getImportantItem());
         din.MapSSet2csv("data/patient_packaged_removed.csv");
 		
