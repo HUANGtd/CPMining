@@ -24,7 +24,7 @@ public class DoublePackageExperiment {
         pp.genSetMap();
         nameMap = pp.getNameMap();
 
-        // set map [1-lv].package
+        // set map [preprocess].package
         HashMap<String, ItemSet> setList = pp.getSetList();
         for(String key : setList.keySet()) {
             if(setList.get(key).getPack().size() != 0) {
