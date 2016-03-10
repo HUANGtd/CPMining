@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import basic.*;
-import preprocess.CatePackaging;
+import mining.CatePackaging;
 import preprocess.ItemSet;
 import preprocess.PreProcess;
 import mining.*;
@@ -56,7 +56,7 @@ public class CPMining {
 		CItemSSet sset_mine = din.putPatientInASet();
 		sset_mine.SortSSet();// ***
 		ArrayList<String> itemList_mine = dr.getNoneRepeatItemList();
-		CAPackaging cap1 = new CAPackaging(sset_mine.getSSet(), ratio_mine);
+		FSetPackaging cap1 = new FSetPackaging(sset_mine.getSSet(), ratio_mine);
 		for(String s : itemList2) {
 			System.out.println(s);
 		}
@@ -73,7 +73,7 @@ public class CPMining {
 		CItemSSet sset = mapSSet_cate.get("检验病理费");
 		ArrayList<String> itemList = da.getNoneRepeatItemListMap(mapSSet_cate).get("检验病理费");
 		sset.SortSSet();
-		CAPackaging cap = new CAPackaging(sset.getSSet(), ratio);
+		FSetPackaging cap = new FSetPackaging(sset.getSSet(), ratio);
 		cap.Apriori(itemList);
 		cap.printFPSetList();
 		cap.outputFPSetList("data/mining/list_on_cate_" + ratio + ".txt");

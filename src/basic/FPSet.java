@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class FPSet {
-	private int n = 0;// all the frequent patterns in this set are n-frequent patterns
+	private int n = 0; // all the frequent patterns in this set are n-frequent patterns
 	private ArrayList<FPSequence> listSequence = null;
 	
 	public FPSet(int n) {
@@ -33,6 +33,10 @@ public class FPSet {
 		}
 		
 		return false;
+	}
+
+	public ArrayList<FPSequence> getFPSequcence() {
+		return this.listSequence;
 	}
 	
 	/****************** output *****************/

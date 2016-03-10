@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import basic.*;
-import preprocess.CatePackaging;
-import preprocess.ItemSet;
-import preprocess.PreProcess;
+import mining.CatePackaging;
+import preprocess.*;
 import mining.*;
 import io.DataInput;
 
