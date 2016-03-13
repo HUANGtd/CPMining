@@ -241,7 +241,7 @@ public class DataInput {
 			}
 		}
 	}
-	
+
 	public void markImportantItem(ArrayList<String> importantItem) {
 		if(this.mapSSet == null) {
 			System.out.println("map of set is empty!");

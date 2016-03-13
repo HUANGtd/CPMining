@@ -36,18 +36,16 @@ public class DoublePackageExperiment {
         }
 
         /** experiment: single packaging **/
-//        SinglePackage(nameMap, mapKey2PackSet);
+//        SinglePackage(nameMap, mapKey2PackSet, 0.8);
 
         /** experiment: double packaging **/
-        DoublePackage(nameMap, mapKey2PackSet);
+        DoublePackage(nameMap, mapKey2PackSet, 0.8, 0.8);
     }
 
     // experiment: package items within each category first
-    public static void DoublePackage(HashMap<String, String> nameMap, HashMap<String, PackSet> mapKey2PackSet) {
+    public static void DoublePackage(HashMap<String, String> nameMap, HashMap<String, PackSet> mapKey2PackSet, double support_inCate, double support_onWhole) {
         HashMap<String, PackSSet> mapKey2PackSset = new HashMap<String, PackSSet>();
         HashMap<String, PackSSSet> mapKey2PackSsset = new HashMap<String,PackSSSet>();
-        double support_inCate = 0.8;
-        double support_onWhole = 0.8;
 
         /** packaging inner 14 categories **/
         DataInput doubleDin_inCate = new DataInput(nameMap);
@@ -129,10 +127,9 @@ public class DoublePackageExperiment {
     }
 
     // experiment: package items by day
-    public static void SinglePackage(HashMap<String, String> nameMap, HashMap<String, PackSet> mapKey2PackSet) {
+    public static void SinglePackage(HashMap<String, String> nameMap, HashMap<String, PackSet> mapKey2PackSet, double support) {
         DataInput singleDin = new DataInput(nameMap);
         HashMap<String, PackSSet> mapKey2PackSset = new HashMap<String, PackSSet>();
-        double support = 0.8;
 
         HashMap<String, CItemSSet> mapSSet = singleDin.DataInputByPatient("data/patientData.txt");
         CItemSSet csset = singleDin.putPatientInASet();
@@ -181,6 +178,12 @@ public class DoublePackageExperiment {
         // reduce frequent packages on whole
         dr.removingItemsRepeatDailyOnWhole(0.5, 0.05);
         din.removeItemsOnWhole(dr.getItemToRemoveOnWhole());
+
+        // ignore some categories if necessary
+        ArrayList<String> categoryToIgnore = new ArrayList<String>();
+        categoryToIgnore.add("采暖费");
+        categoryToIgnore.add("床位费");
+        dr.markIgnoreCategory(categoryToIgnore);
 
         // select important packages
         dr.markImportantItems(20, 0.98);
@@ -251,6 +254,7 @@ public class DoublePackageExperiment {
 
         // printing
         int psssCount = 0;
+
         for(String key : mapKey2Psss.keySet()) {
             if((double)packTimebyday.get(key)/totalDays > 0.05) {
                 psssCount++;

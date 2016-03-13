@@ -40,7 +40,7 @@ public class FPMingExperiment {
         }
 
         /** mine with apriori **/
-        double ratio = 0.06;
+        double ratio = 0.075;
         DataInput din_apriori = new DataInput(nameMap);
         DataReduction dr_apriori = new DataReduction(din_apriori);
         HashMap<String, CItemSSet> mapSSet = din_apriori.DataInputByPatient("data/patientData.txt");

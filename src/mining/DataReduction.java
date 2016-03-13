@@ -21,6 +21,7 @@ public class DataReduction {
 	private int intTotalDays = 0;// total number of days which is the sum of LOS of each patient
 	private HashMap<String, ArrayList<String>> itemToRemoveEachPatinet = null;
 	private ArrayList<String> itemToRemoveOnWhole = null;
+	private ArrayList<String> ignoreCategoryItem = null;
 	private ArrayList<String> lowFQItem = null;
 	private ArrayList<String> importantItem = null;
 	private HashMap<String, Double> itemDayCoverageRatio = null;
@@ -102,6 +103,20 @@ public class DataReduction {
 		DataOutput dout = new DataOutput(this.mapSSetByPatient);
 		dout.outputReducedSSetMapByPatientOnWhole("data/mining/patient_daily_reduced_onwhole.txt", this.itemToRemoveOnWhole);
 	}
+
+	public void markIgnoreCategory(ArrayList<String> categoryToIgnore) {
+		this.ignoreCategoryItem = new ArrayList<String>();
+		for(String key : this.mapSSetByPatient.keySet()) {
+			for(CItemSet set : this.mapSSetByPatient.get(key).getSSet()) {
+				set.SortSet();
+				for(CItem item : set.getSortedSet()) {
+					if(categoryToIgnore.contains(item.getCategory())) {
+						this.ignoreCategoryItem.add(item.getName());
+					}
+				}
+			}
+		}
+	}
 	
 	// mark important item that appears in every patient
 	public void markImportantItems(int top, double sup) {
@@ -134,7 +149,7 @@ public class DataReduction {
 		int patientNum = this.mapSSetByPatient.size();
 		for(String key : itemPatientCoverage.keySet()) {
 			Double r = (double)itemPatientCoverage.get(key) / patientNum;
-			if((r > sup) && !(this.itemToRemoveOnWhole.contains(key))) {
+			if((r > sup) && !(this.itemToRemoveOnWhole.contains(key)) && !(this.ignoreCategoryItem.contains(key))) {
 				importantItem.add(key);
 			}
 		}
