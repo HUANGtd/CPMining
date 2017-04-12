@@ -36,12 +36,16 @@ public class CPMining {
 		/******************* reduction[by patient] **************/
 		HashMap<String, CItemSSet> mapSSet = din.DataInputByPatient("data/patientData.txt");
 
-        /** reduce on whole **/
-        dr.removingItemsRepeatDailyOnWhole(0.5, 0.05);
-        din.removeItemsOnWhole(dr.getItemToRemoveOnWhole());
-		 
-        dr.markImportantItems(20, 0.98);
-        din.markImportantItem(dr.getImportantItem());
+		/** reduce on whole **/
+		dr.removingItemsRepeatDailyOnWhole(0.5, 0.05);
+		din.removeItemsOnWhole(dr.getItemToRemoveOnWhole());
+
+		ArrayList<String> ignoreCate = new ArrayList<String>();
+		ignoreCate.add("采暖费");
+		ignoreCate.add("床位费");
+		dr.markIgnoreCategory(ignoreCate);
+		dr.markImportantItems(20, 0.98);
+		din.markImportantItem(dr.getImportantItem());
         din.MapSSet2csv("data/patient_packaged_removed.csv");
 		
 		/** reduce by patient **/
@@ -52,19 +56,19 @@ public class CPMining {
 		
 		/******************* mine by patient using apriori **************/
 		/*
-		double ratio_mine = 0.1;
+		double ratio_mine = 0.5;
 		CItemSSet sset_mine = din.putPatientInASet();
 		sset_mine.SortSSet();// ***
 		ArrayList<String> itemList_mine = dr.getNoneRepeatItemList();
-		FSetPackaging cap1 = new FSetPackaging(sset_mine.getSSet(), ratio_mine);
-		for(String s : itemList2) {
-			System.out.println(s);
-		}
-		cap1.Apriori(itemList_mine);
+		FSetPackaging cap1 = new FSetPackaging(itemList_mine, sset_mine.getSSet(), ratio_mine);
+//		for(String s : itemList2) {
+//			System.out.println(s);
+//		}
+		cap1.Apriori();
 		cap1.printFPSetList();
-		cap1.outputFPSetList("data/mining/list_on_patient_" + ratio_mine + ".txt");
+//		cap1.outputFPSetList("data/mining/list_on_patient_" + ratio_mine + ".txt");
 		*/
-		
+
 		/******************* mine by category **************/
 		/*
 		double ratio = 0.04;
@@ -109,20 +113,22 @@ public class CPMining {
 		
 		/****************** pre2: package items that often occur together in each category *****************/
 		DataInput pre2din = new DataInput(nameMap);
-//		double ratio_cp = 0.8;
+		double ratio_cp = 0.8;
 		HashMap<String, String> mapAllItem2package = new HashMap<String, String>();
 		HashMap<String, CItemSSet> mapSSet_cp = pre2din.DataInputByCategory("data/patientData.txt");
 		DataAnalysis da_cp = new DataAnalysis(pre2din);
-		double bestSup2;
+//		double bestSup2;
 		for(String key : mapSSet_cp.keySet()) {
 			CItemSSet sset_cp = mapSSet_cp.get(key);
 			sset_cp.SortSSet();
 			CatePackaging cp = new CatePackaging(sset_cp.getSSet());
-			
-			bestSup2 = cp.findTheBestSupport();
+
+			cp.Packaging(ratio_cp);
+
+//			bestSup2 = cp.findTheBestSupport();
 //			System.out.println(key + ": " + bestSup2);
 //			cp.printMapCateset();
-			
+
 			// replace items with package
 			HashMap<String, Boolean> cpMark = cp.getMarkMap();
 			HashMap<String, String> cpMap = cp.getItem2keyMap();
@@ -135,7 +141,7 @@ public class CPMining {
 				}
 			}
 			mapAllItem2package.putAll(cpMap);
-			
+
 			// set basic.PackSSet
 			HashMap<String, CateSet> mapCateSet = cp.getName2Cateset();
 			for(String ky : mapCateSet.keySet()) {
@@ -153,16 +159,18 @@ public class CPMining {
 		}
 		
 		/****************** pre3: package items that often occur together in each day *****************/
-//		double ratio_pack = 0.5;
-		double bestSup3;
+		double ratio_pack = 0.8;
+//		double bestSup3;
 		DataInput pre3din = new DataInput(nameMap);
 		HashMap<String, CItemSSet> mapSSet_pack = pre3din.DataInputByPatient("data/patientData.txt");
 		CItemSSet csset = pre3din.putPatientInASet();
 		csset.SortSSet();
 		CatePackaging cp_pack = new CatePackaging(csset.getSSet());
-		bestSup3 = cp_pack.findTheBestSupport();
+		cp_pack.Packaging(ratio_pack);
+
+//		bestSup3 = cp_pack.findTheBestSupport();
 //		System.out.println("best support: " + bestSup3);
-		
+
 		// replace items with package
 		HashMap<String, Boolean> cpMark_pack = cp_pack.getMarkMap();
 		HashMap<String, String> cpMap_pack = cp_pack.getItem2keyMap();
@@ -179,7 +187,7 @@ public class CPMining {
 			String newKey2 = new String(cpMap_pack.get(previousKey2));
 			nameMap.put(key, newKey2);
 		}
-		
+
 		// set basic.PackSSSet
 		HashMap<String, CateSet> mapCateSet_pack = cp_pack.getName2Cateset();
 		for(String key : mapCateSet_pack.keySet()) {
@@ -190,10 +198,10 @@ public class CPMining {
 			}
 			mapKey2Psss.put(key, psss);
 		}
-		
+
 		// output mapKey2Psss
-//		printMapKey2Psss(mapKey2Psss, nameMap);
-		
+		printMapKey2Psss(mapKey2Psss, nameMap);
+
 		return nameMap;
 	}
 	

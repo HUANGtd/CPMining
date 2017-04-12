@@ -32,6 +32,7 @@ public class DataReduction {
 		this.mapSSetByPatient = this.din.DataInputByPatient(input);
 		this.listNoneRepeatItem = genNoneRepeatItemList(this.mapSSetByCategory);
 		this.intTotalDays = getTotalDays(this.mapSSetByPatient);
+        this.itemToRemoveOnWhole = new ArrayList<String>();
 	}
 	
 	public DataReduction(DataInput din) {
@@ -40,6 +41,7 @@ public class DataReduction {
 		this.mapSSetByPatient = this.din.DataInputByPatient("data/patientData.txt");
 		this.listNoneRepeatItem = genNoneRepeatItemList(this.mapSSetByCategory);
 		this.intTotalDays = getTotalDays(this.mapSSetByPatient);
+        this.itemToRemoveOnWhole = new ArrayList<String>();
 	}
 	
 	// removing items that repeats almost on everyday [by patient]
@@ -78,7 +80,7 @@ public class DataReduction {
 	public void removingItemsRepeatDailyOnWhole(double top, double low) {
 		HashMap<String, Integer> itemDayCoverage = new HashMap<String, Integer>();
 		this.itemDayCoverageRatio = new HashMap<String, Double>();
-		this.itemToRemoveOnWhole = new ArrayList<String>();
+
 		for(String item : this.listNoneRepeatItem) {
 			itemDayCoverage.put(item, 0);
 		}
@@ -152,11 +154,15 @@ public class DataReduction {
 			if((r > sup) && !(this.itemToRemoveOnWhole.contains(key)) && !(this.ignoreCategoryItem.contains(key))) {
 				importantItem.add(key);
 			}
+//			if((r > sup) && !(this.itemToRemoveOnWhole.contains(key))) {
+//				importantItem.add(key);
+//			}
 		}
 		
 		HashMap<String, Double> importantItemRate = new HashMap<String, Double>();
 		for(String key : importantItem) {
-			importantItemRate.put(key, this.itemDayCoverageRatio.get(key));
+//			importantItemRate.put(key, this.itemDayCoverageRatio.get(key));
+            importantItemRate.put(key, (double)itemPatientCoverage.get(key) / patientNum);
 		}
 		
 		// sort

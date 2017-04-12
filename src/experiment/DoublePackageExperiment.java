@@ -36,10 +36,10 @@ public class DoublePackageExperiment {
         }
 
         /** experiment: single packaging **/
-//        SinglePackage(nameMap, mapKey2PackSet, 0.8);
+        SinglePackage(nameMap, mapKey2PackSet, 0.8);
 
         /** experiment: double packaging **/
-        DoublePackage(nameMap, mapKey2PackSet, 0.8, 0.8);
+//        DoublePackage(nameMap, mapKey2PackSet, 0.8, 0.8);
     }
 
     // experiment: package items within each category first
@@ -177,7 +177,7 @@ public class DoublePackageExperiment {
 
         // reduce frequent packages on whole
         dr.removingItemsRepeatDailyOnWhole(0.5, 0.05);
-        din.removeItemsOnWhole(dr.getItemToRemoveOnWhole());
+//        din.removeItemsOnWhole(dr.getItemToRemoveOnWhole());
 
         // ignore some categories if necessary
         ArrayList<String> categoryToIgnore = new ArrayList<String>();
