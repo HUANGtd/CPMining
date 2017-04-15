@@ -19,6 +19,9 @@ public class DoublePackageExperiment {
         DataInput pre1din = new DataInput();
         DataReduction dr = new DataReduction(pre1din);
         ArrayList<String> itemList = dr.getNoneRepeatItemList();
+
+//        System.out.println("Initial event num: " + itemList.size());
+
         PreProcess pp = new PreProcess(itemList);
         pp.genSetMap();
         nameMap = pp.getNameMap();
@@ -35,22 +38,26 @@ public class DoublePackageExperiment {
             }
         }
 
+//        System.out.println("Initial event num: " + mapKey2PackSet.size());
+
         /** experiment: single packaging **/
-        SinglePackage(nameMap, mapKey2PackSet, 0.8);
+//        SinglePackage(nameMap, mapKey2PackSet, 0.8);
 
         /** experiment: double packaging **/
-//        DoublePackage(nameMap, mapKey2PackSet, 0.8, 0.8);
+        DoublePackage(nameMap, mapKey2PackSet, 0.8, 0.8, "data/patientData.txt", "data/experiment/experiment3/double_packaging.csv");
+//        DoublePackage(nameMap, mapKey2PackSet, 0.8, 0.8, "data/patientData.txt", "data/experiment/experiment1/double_packaging_fggs.csv");
     }
 
     // experiment: package items within each category first
-    public static void DoublePackage(HashMap<String, String> nameMap, HashMap<String, PackSet> mapKey2PackSet, double support_inCate, double support_onWhole) {
+    public static void DoublePackage(HashMap<String, String> nameMap, HashMap<String, PackSet> mapKey2PackSet, double support_inCate, double support_onWhole, String inData, String outData) {
         HashMap<String, PackSSet> mapKey2PackSset = new HashMap<String, PackSSet>();
         HashMap<String, PackSSSet> mapKey2PackSsset = new HashMap<String,PackSSSet>();
 
         /** packaging inner 14 categories **/
         DataInput doubleDin_inCate = new DataInput(nameMap);
         HashMap<String, String> mapAllItem2package = new HashMap<String, String>(); // put all categories together
-        HashMap<String, CItemSSet> mapSSet_inCate = doubleDin_inCate.DataInputByCategoryDaily("data/patientData.txt");
+        HashMap<String, CItemSSet> mapSSet_inCate = doubleDin_inCate.DataInputByCategoryDaily(inData);
+
         for(String key : mapSSet_inCate.keySet()) {
             CItemSSet sset_inCate = mapSSet_inCate.get(key);
             sset_inCate.SortSSet();
@@ -123,7 +130,7 @@ public class DoublePackageExperiment {
 		printMapKey2Psss(mapKey2PackSsset, nameMap);
 
         // post process
-        PostProcess(nameMap, "data/experiment/experiment3/double_packaging.csv");
+        PostProcess(nameMap, outData);
     }
 
     // experiment: package items by day
@@ -183,10 +190,11 @@ public class DoublePackageExperiment {
         ArrayList<String> categoryToIgnore = new ArrayList<String>();
         categoryToIgnore.add("采暖费");
         categoryToIgnore.add("床位费");
+        categoryToIgnore.add("1");
         dr.markIgnoreCategory(categoryToIgnore);
 
         // select important packages
-        dr.markImportantItems(20, 0.98);
+        dr.markImportantItems(50, 0.8);
         din.markImportantItem(dr.getImportantItem());
 
         // output to .csv file

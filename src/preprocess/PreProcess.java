@@ -49,7 +49,6 @@ public class PreProcess {
 		Collections.sort(newList, new SortByName());
 		this.arrSetList = new HashMap<String, ItemSet>();
 		for(String s : newList) {
-			//System.out.println(s);
 			this.arrSetList.put(s, new ItemSet(s));
 		}
 		for(String os : this.oriList) {

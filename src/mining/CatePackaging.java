@@ -7,10 +7,11 @@ import basic.*;
 
 public class CatePackaging {
 	private HashMap<String, CateSet> mapName2Cateset = null;
-	private HashMap<String, ArrayList<CItemSet>> mapName2arrNoneRepeatItem = null; // item -> sequence contains the item
+	private HashMap<String, ArrayList<CItemSet>> mapName2arrNoneRepeatItem = null; // item -> sequence that contains the item
 	private HashMap<String, String> mapItem2key = null;
 	private HashMap<String, Boolean> markIfMoreThanOne = null; // if cateset.size() > 1 -> true
 	private HashMap<String, HashMap<String, Double>> mapAccompanyRate = null;
+	private ArrayList<String> arrNoneRepeatItem = null;
 	private ArrayList<CItemSet> arrD = null;
 	private int intMaxLength = 0;
 	
@@ -111,7 +112,7 @@ public class CatePackaging {
 			
 			// get variance of cover rate
 			ArrayList<Double> coverRate = new ArrayList<Double>();
-			ArrayList<CItemSet> noneRepearCItemSet4Package = getNoneRepearCItemSet4Package(packageSet);
+			ArrayList<CItemSet> noneRepearCItemSet4Package = getNoneRepeatCItemSet4Package(packageSet);
 			
 			for(String item : packageSet) {
 				double itemCoverRate;
@@ -157,7 +158,7 @@ public class CatePackaging {
 		return false;
 	}
 	
-	public ArrayList<CItemSet> getNoneRepearCItemSet4Package(ArrayList<String> packageSet) {
+	public ArrayList<CItemSet> getNoneRepeatCItemSet4Package(ArrayList<String> packageSet) {
 		ArrayList<CItemSet> noneRepearCItemSet4Package = new ArrayList<CItemSet>();
 		for(String item : packageSet) {
 			ArrayList<CItemSet> noneRepearCItemSet4ItemOfPackage = this.mapName2arrNoneRepeatItem.get(item);
@@ -173,6 +174,28 @@ public class CatePackaging {
 	
 	/****************** package with given ratio *****************/
 	public void Packaging(double ratio) {
+		this.mapItem2key = new HashMap<String, String>();
+		this.mapName2Cateset = getInitialCatesetmap(this.mapItem2key);
+
+		for(int i = 0; i < this.arrNoneRepeatItem.size()-1; i++) {
+			for(int j = i+1; j < this.arrNoneRepeatItem.size(); j++) {
+				String citem_i = this.mapItem2key.get(this.arrNoneRepeatItem.get(i));
+				String citem_j = this.mapItem2key.get(this.arrNoneRepeatItem.get(j));
+
+				if(!citem_i.equals(citem_j)) {
+					if(isTogetherAll(this.mapName2Cateset.get(citem_i).getCateSet(), this.mapName2Cateset.get(citem_j).getCateSet(), ratio)) {
+						for(String s : this.mapName2Cateset.get(citem_j).getCateSet()) {
+							this.mapItem2key.put(s, citem_i);
+						}
+						this.mapName2Cateset.get(citem_i).mergeCateSet(this.mapName2Cateset.get(citem_j));
+						this.mapName2Cateset.remove(citem_j);
+					}
+				}
+			}
+		}
+	}
+
+	public void PackagingOld(double ratio) {
 		this.mapItem2key = new HashMap<String, String>();
 		this.mapName2Cateset = getInitialCatesetmap(this.mapItem2key);
 
@@ -274,6 +297,8 @@ public class CatePackaging {
 	
 	public HashMap<String, ArrayList<CItemSet>> getNoneRepeatItemMap(ArrayList<CItemSet> D) {
 		HashMap<String, ArrayList<CItemSet>> map = new HashMap<String, ArrayList<CItemSet>>();
+		this.arrNoneRepeatItem = new ArrayList<String>();
+
 		for(CItemSet cset : D) {
 			for(CItem citem : cset.getSortedSet()) {
 				String name = citem.getName();
@@ -281,6 +306,7 @@ public class CatePackaging {
 					ArrayList<CItemSet> arr = new ArrayList<CItemSet>();
 					arr.add(cset);
 					map.put(name, arr);
+					this.arrNoneRepeatItem.add(name);
 				} else {
 					ArrayList<CItemSet> arr = map.get(name);
 					arr.add(cset);
