@@ -131,20 +131,20 @@ public class DataReduction {
 		}
 		
 		for(String key : this.mapSSetByPatient.keySet()) {
+			ArrayList<String> noneRepeatItemOfAPatient = new ArrayList<String>();
+
 			for(CItemSet set : this.mapSSetByPatient.get(key).getSSet()) {
 				set.SortSet();
-				ArrayList<String> noneRepeatItemOfAPatient = new ArrayList<String>();
 				for(CItem item : set.getSortedSet()) {
 					if(!noneRepeatItemOfAPatient.contains(item.getName())) {
 						noneRepeatItemOfAPatient.add(item.getName());
 					}
-					
 				}
-				for(String s : noneRepeatItemOfAPatient) {
-					int count = itemPatientCoverage.get(s);
-					count++;
-					itemPatientCoverage.put(s, count);
-				}
+			}
+			for(String s : noneRepeatItemOfAPatient) {
+				int count = itemPatientCoverage.get(s);
+				count++;
+				itemPatientCoverage.put(s, count);
 			}
 		}
 		

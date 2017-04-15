@@ -47,6 +47,7 @@ public class DataInput {
 				} else {
 					newItem = new CItem(this.nameMap.get(a[1]), a[0], a[2], a[3], a[1]);
 				}
+				cate = a[2];
 
 				if(cate == null || date == null || !date.equals(a[3])) {
 					if(dailyCItemSset != null) {
@@ -61,7 +62,6 @@ public class DataInput {
 					}
 
 					dailyCItemSset = new HashMap<String, CItemSet>();
-					cate = a[2];
 					date = a[3];
 					if(!dailyCItemSset.containsKey(cate)) {
 						CItemSet newDailySSet = new CItemSet(cate);
@@ -296,10 +296,17 @@ public class DataInput {
 				for(CItemSet set : sset.getSSet()) {
 					for(CItem item : set.getSortedSet()) {
 						if(item.getStatus() == 2) {
-							String date[] = item.getDate().split("/");
-							String newDate = "20" + date[2] + "/" + date[0] + "/" + date[1]; 
-							String[] contents = {String.valueOf(caseId), item.getPatientId(), item.getName(), newDate};
-							wr.writeRecord(contents);
+							if(item.getDate().contains("/")) {
+								String date[] = item.getDate().split("/");
+								String newDate = "20" + date[2] + "/" + date[0] + "/" + date[1];
+								String[] contents = {String.valueOf(caseId), item.getPatientId(), item.getName(), newDate};
+								wr.writeRecord(contents);
+							} else if(item.getDate().contains("-")) {
+								String date[] = item.getDate().split("-");
+								String newDate = date[0] + "/" + date[1] + "/" + date[2];
+								String[] contents = {String.valueOf(caseId), item.getPatientId(), item.getName(), newDate};
+								wr.writeRecord(contents);
+							}
 						}
 					}
 				}

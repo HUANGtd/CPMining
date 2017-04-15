@@ -23,7 +23,6 @@ public class CPMining {
         CAMining(nameMap);
 	}
 
-	// clinial activity mining 
 	public static void CAMining(HashMap<String, String> nameMap) {
 		DataInput din = new DataInput(nameMap);
 		DataReduction dr = new DataReduction(din);
